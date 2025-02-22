@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+import fs from "fs";
 
 // Configuration means setting up something with the necessary details so that it works properly.
 cloudinary.config({ 
