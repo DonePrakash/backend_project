@@ -31,7 +31,8 @@ const registerUser = asyncHandler( async (req,res) => {
 
     // get user details from frontend - here we are doing it using postman
     const {fullName,email,username,password} = req.body
-    console.log("email: ",email);
+    // console.log("email: ",email);
+    // console.log(req.body);
     
     // if(fullName === ""){
     //     throw new ApiError(400, "fullname is required")
@@ -47,7 +48,7 @@ const registerUser = asyncHandler( async (req,res) => {
     }
 
     // check if user already exists : username,email
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or:[{ username }, { email }]
     })
 
@@ -57,8 +58,17 @@ const registerUser = asyncHandler( async (req,res) => {
 
     // check for images, check for avatar
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
+    // If there is no coverImage then we get this error : TypeError: Cannot read properties of undefined (reading '0') 
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    // To handle the typeError issue we handle it like this
+    let coverImageLocalPath;
+    if((req.files) && Array.isArray(req.files.coverImage) && (req.files.coverImage.length > 0)){
+        coverImageLocalPath = req.files.coverImage[0].path
+    }
+    
+    
+    
     if(!avatarLocalPath){
         throw new ApiError(400, "Avatar file is required");
     }
